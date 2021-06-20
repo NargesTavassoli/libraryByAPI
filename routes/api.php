@@ -19,9 +19,11 @@ use Illuminate\Support\Facades\Route;
 Route::group([] , function (){
     Route::post('/login', 'AuthController@login');
 
+    Route::post('/register', 'AuthController@register');
+
     Route::middleware('auth:api')->post('/logout', 'AuthController@logout');
 
-    Route::middleware('auth:api')->post('/user', 'AuthController@current');
+    Route::middleware('auth:api')->get('/user', 'AuthController@current');
 });
 
 //API routes for book management
@@ -42,6 +44,8 @@ Route::middleware('auth:api')->prefix('book')->group(function (){
 });
 
 //API routes for book management by Admin
+Route::middleware(['auth:api', 'is_admin'])->post('/admin/user', 'Admin\UserController@create');
+
 Route::middleware(['auth:api', 'is_admin'])->prefix('admin/book')->group(function (){
 
     Route::get('/', 'Admin\BookController@index');
@@ -59,5 +63,4 @@ Route::middleware(['auth:api', 'is_admin'])->prefix('admin/book')->group(functio
     Route::get("/validation", 'Admin\StockController@validation');
 
     Route::post("/stock/{bookId}", 'Admin\StockController@stock');
-
 });
